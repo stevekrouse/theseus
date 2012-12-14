@@ -3,8 +3,7 @@ that would return all possible optimal solutions. However, for mazes 6 and up,
 the solutions were so long (and, more importantly, there was so many possible
 solutions) that it was taking way too long to get even one answer. Thus, I
 needed a way to get rid of some solutions that were almost identical to
-others. My girlfriend (who, if you remember, helped me solve the recursive
-maze) came up with a key insight that I could remove the solutions
+others. My girlfriend came up with a key insight that I could remove the solutions
 whose both positions arrive at the same point at the same time. This is
 because this would indicate that these mazes have "converged." Convergence
 happened most often in key places where you need to trap the minotaur to win.
