@@ -141,14 +141,14 @@ ariadne m x = ariadne' m (concat (map (ballOString m) [[x]]))
           where l' = (rebuild (loseTheLoses ( minotaurAttacks m l)) [])
 
 
---the minotaur moves two spaces towards Theseus
+--the minotaur moves two spaces towards Theseus on all possibilities
 minotaurAttacks :: Maze -> [[((Int, Int),(Int,Int))]]  -> [[((Int,Int),(Int,Int))]]
 minotaurAttacks m l = map (\list -> (minotaur m (head list)) : list)
   (map (\list -> (minotaur m (head list)) : list) l)
                       
 
 --checks if a solution has been found yet. the empty list stands for "not yet"
---and I cons the solution onto finding all other solutions to get ALL solutions
+--and it returns all optimal solutionsk, if any found yet
 hasTheseusSkippedTown :: Maze -> [[((Int,Int),(Int,Int))]] -> [[((Int,Int),(Int,Int))]]
 hasTheseusSkippedTown m [] = []
 hasTheseusSkippedTown maze@(Maze (p:ps)) ((((x,y),m):xs):xss)
@@ -157,7 +157,7 @@ hasTheseusSkippedTown maze@(Maze (p:ps)) ((((x,y),m):xs):xss)
   | otherwise                   = hasTheseusSkippedTown maze xss
 
 --continue each attempt moving Theseus one move foward, whie making sure not
---repeat exact arrangements
+--to repeat exact arrangements in a specific solution
 ballOString :: Maze ->  [((Int,Int),(Int,Int))] -> [[((Int,Int),(Int,Int))]]
 ballOString  m = (\list -> (map (\move -> (move,(snd (head list))) : list)
                                   ((movesAndDelay m (fst (head list))) \\(map
@@ -178,7 +178,7 @@ movesAndDelay (Maze m) (x,y) = decodeGrid  (m!!y!!x) (x,y) [(x-1,y),(x+1,y),(x,y
           |p==W    = decodeGrid ps (x,y) given \\ [(x-1,y)]
           |p==S    = decodeGrid ps (x,y) given \\ [(x,y+1)]
 
---get rid of the solutions in which Theseus dies
+--get rids of the solutions in which Theseus dies
 loseTheLoses :: [[((Int,Int),(Int,Int))]] -> [[((Int,Int),(Int,Int))]]
 loseTheLoses []                       = []
 loseTheLoses ((((tX,tY),(mX,mY)):xs):xss)
@@ -202,7 +202,7 @@ wrapUpTheYarn l = map (wrapUpTheYarn' 1 (fst (head (head l))))
                                      | bY < aY = "Up"
                                      | otherwise = "Delay"
 
---optimization to get rid of converging solutions
+--Diana's optimization to get rid of converging solutions
 rebuild :: (Eq a) => [[a]] -> [[a]] -> [[a]]
 rebuild [] b = b
 rebuild ((a:as):ass)  b | (contains a b) = rebuild ass b
@@ -211,4 +211,5 @@ rebuild ((a:as):ass)  b | (contains a b) = rebuild ass b
                               contains a [] = False
                               contains a (x:xs) = if (a==(head x)) then True else contains a xs
 
+--makes the output from ariadne reaable and takes the maze # from the puzzle as input
 solve n = wrapUpTheYarn (ariadne (mazes!!n) (points!!n))
